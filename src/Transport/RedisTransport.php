@@ -138,7 +138,7 @@ final class RedisTransport implements TransportInterface, MessageCountAwareInter
         if (!$stamp) {
             return null;
         }
-        return $stamp->getDelay() + (microtime(true) * 1000);
+        return $stamp->getDelay() + round(microtime(true) * 1000);
     }
 
     private function encodeEnvelope(Envelope $env): string {
