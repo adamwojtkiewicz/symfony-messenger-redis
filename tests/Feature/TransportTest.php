@@ -6,6 +6,8 @@ use Krak\SymfonyMessengerRedis\Stamp\DebounceStamp;
 use Krak\SymfonyMessengerRedis\Stamp\UniqueStamp;
 use Krak\SymfonyMessengerRedis\Transport\RedisTransport;
 use Krak\SymfonyMessengerRedis\Transport\RedisTransportFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\BusNameStamp;
@@ -33,45 +35,43 @@ final class TransportTest extends TestCase
         $this->given_the_redis_transport_is_setup_from_dsn_and_options();
     }
 
-    /**
-     * @test
-     * @dataProvider provide_custom_redis_urls_with_db
-     */
-    public function allows_custom_db(string $place) {
+    #[Test]
+    #[DataProvider('provide_custom_redis_urls_with_db')]
+    public function allows_custom_db(string $place): void {
         $this->given_the_redis_transport_contains_db('1', $place);
         $this->given_there_is_a_wrapped_message();
         $this->when_the_message_is_sent_on_the_transport();
         $this->then_the_queues_are_empty();
     }
 
-    public function provide_custom_redis_urls_with_db() {
+    public static function provide_custom_redis_urls_with_db(): iterable {
         yield 'db in query params' => ['query_string'];
         yield 'db in path' => ['path'];
         yield 'db in options' => ['options'];
     }
 
-    /** @test */
-    public function supports_tls() {
+    #[Test]
+    public function supports_tls(): void {
         $this->given_the_redis_transport_is_setup_from_dsn_and_options('rediss://redis?queue=messenger');
         $this->then_the_redis_transport_connect_params_use_tls();
     }
 
-    /** @test */
-    public function can_send_a_message() {
+    #[Test]
+    public function can_send_a_message(): void {
         $this->given_there_is_a_wrapped_message();
         $this->when_the_message_is_sent_on_the_transport();
         $this->then_the_queue_contains_the_message();
     }
 
-    /** @test */
-    public function can_ack_a_message() {
+    #[Test]
+    public function can_ack_a_message(): void {
         $this->given_there_is_a_wrapped_message();
         $this->when_the_message_is_sent_received_and_acked();
         $this->then_the_queues_are_empty();
     }
 
-    /** @test */
-    public function can_ack_a_message_with_new_stamps() {
+    #[Test]
+    public function can_ack_a_message_with_new_stamps(): void {
         $this->given_there_is_a_wrapped_message();
         $this->when_the_message_is_sent_received_and_acked(function(Envelope $env) {
             return $env->with(new BusNameStamp('bus'));
@@ -79,38 +79,36 @@ final class TransportTest extends TestCase
         $this->then_the_queues_are_empty();
     }
 
-    /** @test */
-    public function can_reject_a_message() {
+    #[Test]
+    public function can_reject_a_message(): void {
         $this->given_there_is_a_wrapped_message();
         $this->when_the_message_is_sent_received_and_rejected();
         $this->then_the_queues_are_empty();
     }
 
-    /** @test */
-    public function can_receive_messages_from_legacy_serialization_format() {
+    #[Test]
+    public function can_receive_messages_from_legacy_serialization_format(): void {
         $this->given_there_is_a_message_on_the_queue_with_legacy_serialization();
         $this->when_the_message_is_received_and_acked();
         $this->then_the_queues_are_empty();
     }
 
-    /**
-     * @test
-     * @dataProvider provide_unique_message_ids
-     */
-    public function can_handle_unique_messages(?string $id = null) {
+    #[Test]
+    #[DataProvider('provide_unique_message_ids')]
+    public function can_handle_unique_messages(?string $id = null): void {
         $this->given_there_is_a_wrapped_message();
         $this->given_there_is_a_unique_stamp_on_the_message($id);
         $this->when_the_message_is_sent_on_the_transport(5);
         $this->then_the_queue_has_size(1);
     }
 
-    public function provide_unique_message_ids() {
+    public static function provide_unique_message_ids(): iterable {
         yield 'no id' => [null];
         yield 'id 123' => ['123'];
     }
 
-    /** @test */
-    public function can_repush_unique_messages_after_they_have_been_processed() {
+    #[Test]
+    public function can_repush_unique_messages_after_they_have_been_processed(): void {
         $this->given_there_is_a_wrapped_message();
         $this->given_there_is_a_unique_stamp_on_the_message('123');
         $this->given_the_message_has_been_processed_through_the_queue();
@@ -118,8 +116,8 @@ final class TransportTest extends TestCase
         $this->then_the_queue_has_size(1);
     }
 
-    /** @test */
-    public function can_delay_messages() {
+    #[Test]
+    public function can_delay_messages(): void {
         $this->given_there_is_a_wrapped_message();
         $this->given_there_is_a_delay_stamp_on_the_message(100);
         $this->when_the_message_is_sent_on_the_transport(1);
@@ -127,8 +125,8 @@ final class TransportTest extends TestCase
         $this->then_the_message_is_not_available_immediately();
     }
 
-    /** @test */
-    public function can_delay_messages_and_wait_for_receiving() {
+    #[Test]
+    public function can_delay_messages_and_wait_for_receiving(): void {
         $this->given_there_is_a_wrapped_message();
         $this->given_there_is_a_delay_stamp_on_the_message(100);
         $this->when_the_message_is_sent_on_the_transport(1);
@@ -136,16 +134,16 @@ final class TransportTest extends TestCase
         $this->then_the_queue_has_size(0);
     }
 
-    /** @test */
-    public function can_handle_debounce_stamp_messages() {
+    #[Test]
+    public function can_handle_debounce_stamp_messages(): void {
         $this->given_there_is_a_wrapped_message();
         $this->given_there_is_a_debounce_stamp_on_the_message(100, '456');
         $this->when_the_message_is_sent_on_the_transport(5);
         $this->then_the_queue_has_size(1);
     }
 
-    /** @test */
-    public function can_debounce_messages_and_wait_for_receiving() {
+    #[Test]
+    public function can_debounce_messages_and_wait_for_receiving(): void {
         $this->given_there_is_a_wrapped_message();
         $this->given_there_is_a_debounce_stamp_on_the_message(100, '7890');
         $this->given_the_message_is_sent_on_the_transport();
@@ -154,18 +152,16 @@ final class TransportTest extends TestCase
         $this->then_the_queue_has_size(0);
     }
 
-    /**
-     * @test
-     * @dataProvider provide_get_message_count_for_stamps
-     */
-    public function get_message_count_for_stamps(StampInterface $stamp, int $count) {
+    #[Test]
+    #[DataProvider('provide_get_message_count_for_stamps')]
+    public function get_message_count_for_stamps(StampInterface $stamp, int $count): void {
         $this->given_there_is_a_wrapped_message();
         $this->given_there_is_a_stamp_on_the_message($stamp);
         $this->when_the_message_is_sent_on_the_transport();
         $this->then_message_count_in_the_queue($count);
     }
 
-    public function provide_get_message_count_for_stamps()
+    public static function provide_get_message_count_for_stamps(): iterable
     {
         yield 'unique stamp' => [new UniqueStamp(1), 1];
         yield 'delay stamp' => [new DelayStamp(100), 1];
@@ -250,12 +246,12 @@ final class TransportTest extends TestCase
         $this->transport->send($this->envelope);
     }
 
-    private function when_the_message_is_sent_received_and_acked(callable $stampEnv = null) {
+    private function when_the_message_is_sent_received_and_acked(?callable $stampEnv = null) {
         $this->transport->send($this->envelope);
         $this->when_the_message_is_received_and_acked($stampEnv);
     }
 
-    private function when_the_message_is_received_and_acked(callable $stampEnv = null) {
+    private function when_the_message_is_received_and_acked(?callable $stampEnv = null) {
         [$env] = $this->transport->get();
         $env = $stampEnv ? $stampEnv($env) : $env;
         $this->transport->ack($env);

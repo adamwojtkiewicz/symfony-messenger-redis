@@ -10,9 +10,10 @@
     ],
     "license": "MIT",
     "require": {
+        "php": "^8.4",
         "ext-json": "*",
         "ext-redis": "*",
-        "symfony/messenger": "^4.4|^5.4|^6.2"
+        "symfony/messenger": "^6.4|^7.4"
     },
     "autoload": {
         "psr-4": {
@@ -25,14 +26,16 @@
         }
     },
     "require-dev": {
-        "nyholm/symfony-bundle-test": "^1.6",
-        "phpunit/phpunit": "^9.0",
-        "symfony/dependency-injection": "^5.4",
-        "symfony/http-kernel": "^5.4",
-        "symfony/property-access": "^5.4",
-        "symfony/serializer": "^5.4"
+        "nyholm/symfony-bundle-test": "^3.1",
+        "phpunit/phpunit": "^11.5",
+        "symfony/dependency-injection": "^6.4|^7.4",
+        "symfony/http-kernel": "^6.4|^7.4",
+        "symfony/phpunit-bridge": "^6.4|^7.4",
+        "symfony/property-access": "^6.4|^7.4",
+        "symfony/redis-messenger": "^6.4|^7.4",
+        "symfony/serializer": "^6.4|^7.4"
     },
     "scripts": {
-        "test": "phpunit --testdox --colors=always"
+        "test": "SYMFONY_DEPRECATIONS_HELPER=max[total]=0 phpunit --testdox --colors=always"
     }
 }

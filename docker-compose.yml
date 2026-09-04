@@ -1,14 +1,15 @@
-version: '3'
-
 services:
   php:
-    build: .
+    build:
+      context: .
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.5}
     command: "tail -f /dev/null"
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
   redis:
-    image: redis
+    image: redis:7-alpine
     command: redis-server --requirepass password123
     environment: { TERM: xterm }
     restart: unless-stopped

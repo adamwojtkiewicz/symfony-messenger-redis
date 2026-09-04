@@ -1,8 +1,8 @@
 # Symfony Messenger Redis Adapter
 
-![PHP Tests](https://github.com/krakphp/symfony-messenger-redis/workflows/PHP%20Tests/badge.svg?branch=master&event=push)
+![PHP Tests](https://github.com/adamwojtkiewicz/symfony-messenger-redis/actions/workflows/push.yml/badge.svg?branch=master)
 
-This provides custom Redis List Integration with the Symfony Messenger ^4.4 system.
+This provides custom Redis List Integration with Symfony Messenger 6.4 and 7.4 on PHP 8.4 and 8.5.
 
 The standard redis implementation requires redis 5.0 and utilizes the streams feature, this adapter uses redis lists to power the queue functionality.
 
@@ -104,6 +104,8 @@ It won't hurt anything other than storage to have those `_processing` lists take
 
 Both symfony's redis and the krak redis transport register the dsn prefix: `redis://`. In the scenario that you want to support both transports, you'll need to use the `use_krak_redis` option to disable this libraries redis transport.
 
+Install `symfony/redis-messenger` when using Symfony's native Redis transport alongside this bundle.
+
 ```yaml
 framework:
   messenger:
@@ -120,6 +122,6 @@ framework:
 
 You can run the test suite with: `composer test`
 
-You'll need to start the redis docker container locally in order for the Feature test suite to pass.
+You'll need to start the Redis Docker container locally in order for the Feature test suite to pass.
 
-Keep in mind that you will need to have the redis-ext installed on your local php cli, and will need to start up the redis instance in docker via `docker-compose`.
+Keep in mind that you will need to have the redis-ext installed on your local PHP CLI, and will need to start up the Redis instance via `docker compose`.

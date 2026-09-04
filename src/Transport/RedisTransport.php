@@ -26,7 +26,7 @@ final class RedisTransport implements TransportInterface, MessageCountAwareInter
         Redis $redis,
         string $queue,
         array $connectParams = ['127.0.0.1', 6379],
-        callable $configureConnection = null
+        ?callable $configureConnection = null
     ) {
         $this->serializer = $serializer;
         $this->redis = $redis;
@@ -36,7 +36,7 @@ final class RedisTransport implements TransportInterface, MessageCountAwareInter
         $this->isConnected = false;
     }
 
-    public static function fromDsn(SerializerInterface $serializer, string $dsn, array $options = []) {
+    public static function fromDsn(SerializerInterface $serializer, string $dsn, array $options = []): self {
         $parsedUrl = \parse_url($dsn);
         if (!$parsedUrl) {
             throw new InvalidArgumentException(sprintf('The given Redis DSN "%s" is invalid.', $dsn));
@@ -238,7 +238,7 @@ LUA;
     }
 
     /** return the lua script for popping items off of the queue */
-    private function popLuaScript() {
+    private function popLuaScript(): string {
         return <<<LUA
 -- Pop a message from the queue into the processing queue and remove the unique id
 -- from the unique set if it exists

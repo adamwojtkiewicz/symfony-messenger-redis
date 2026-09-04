@@ -1,3 +1,12 @@
 /vendor
 /composer.lock
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/phpunit.xml
+/.phpunit.cache/
+.phpunit.result.cache
 .idea/
