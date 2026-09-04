@@ -16,6 +16,7 @@
     <ini name="error_reporting" value="-1"/>
     <env name="SHELL_VERBOSITY" value="-1"/>
     <env name="REDIS_DSN" value="redis://u:password123@redis:6379?queue=messenger"/>
+    <env name="SYMFONY_REDIS_DSN" value="redis://password123@redis:6379"/>
   </php>
   <testsuites>
     <testsuite name="feature">

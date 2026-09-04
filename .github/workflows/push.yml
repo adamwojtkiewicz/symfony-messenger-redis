@@ -19,10 +19,11 @@ jobs:
 
     env:
       REDIS_DSN: redis://u:password123@127.0.0.1:6379?queue=messenger
+      SYMFONY_REDIS_DSN: redis://password123@127.0.0.1:6379
       SYMFONY_DEPRECATIONS_HELPER: max[total]=0
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
